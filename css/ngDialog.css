@@ -50,7 +50,6 @@
 
 .ngdialog {
   position: fixed;
-  overflow: auto;
   -webkit-overflow-scrolling: touch;
   z-index: 10000;
   top: 0;
@@ -78,6 +77,30 @@
   animation: ngdialog-fadein 0.5s;
 }
 
+.ngdialog-scroll {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+}
+
+.ngdialog-center {
+  height: 100%;
+  width: 100%;
+  display: table;
+  position: relative;
+}
+
+.ngdialog-center-row {
+  display: table-row;
+}
+.ngdialog-center-cell {
+  display: table-cell;
+  vertical-align: middle;
+}
+
 .ngdialog-no-overlay {
   pointer-events: none;
 }
@@ -89,6 +112,7 @@
 }
 
 .ngdialog-content {
+  position: relative;
   background: white;
   -webkit-backface-visibility: hidden;
   -webkit-animation: ngdialog-fadein 0.5s;
