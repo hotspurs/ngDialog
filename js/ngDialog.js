@@ -45,6 +45,7 @@
             appendClassName: '',
             disableAnimation: false,
             verticalCentered: false,
+            customAnimation: false,
             plain: false,
             showClose: true,
             closeByDocument: true,
@@ -171,9 +172,22 @@
                         dialogsCount = dialogsCount < 0 ? 0 : dialogsCount;
                         if (animationEndSupport && !options.disableAnimation) {
                             scope.$destroy();
-                            $dialog.unbind(animationEndEvent).bind(animationEndEvent, function () {
-                                privateMethods.closeDialogElement($dialog, value);
-                            }).addClass('ngdialog-closing');
+
+                            if(options.customAnimation) {
+                                $dialog.addClass('ngdialog-closing');
+                                $timeout(function(){
+                                  options.animationEndPromise.then(function(){
+                                    privateMethods.closeDialogElement($dialog, value);
+                                  });
+                                });
+                            } else {
+
+                                $dialog.unbind(animationEndEvent).bind(animationEndEvent, function () {
+                                    privateMethods.closeDialogElement($dialog, value);
+                                }).addClass('ngdialog-closing');
+                            }
+
+
                         } else {
                             scope.$destroy();
                             privateMethods.closeDialogElement($dialog, value);
