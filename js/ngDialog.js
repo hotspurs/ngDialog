@@ -44,6 +44,7 @@
             className: 'ngdialog-theme-default',
             appendClassName: '',
             disableAnimation: false,
+            verticalCentered: false,
             plain: false,
             showClose: true,
             closeByDocument: true,
@@ -513,14 +514,27 @@
                                 locals = setup.locals;
 
                             if (options.showClose) {
-                                template += '<div class="ngdialog-close"></div>';
+
+                                if(options.verticalCentered) {
+                                    var closeHtml = '';
+                                    closeHtml = '<div class="ngdialog-close"></div>';
+                                } else{
+                                    template += '<div class="ngdialog-close"></div>';
+                                }
+
                             }
 
                             var hasOverlayClass = options.overlay ? '' : ' ngdialog-no-overlay';
                             $dialog = $el('<div id="'+dialogID + '" class="ngdialog' + hasOverlayClass + '"></div>');
-                            $dialog.html((options.overlay ?
-                                '<div class="ngdialog-overlay"></div><div class="ngdialog-content" role="document">' + template + '</div>' :
-                                '<div class="ngdialog-content" role="document">' + template + '</div>'));
+
+                            if(options.verticalCentered) {
+                                template = '<div class="ngdialog-center"><div class="ngdialog-center-row"><div class="ngdialog-center-cell"><div class="ngdialog-content" role="document">'+template+'</div></div></div></div>';
+                                $dialog.html((options.overlay ? closeHtml+'<div class="ngdialog-overlay"></div>' + template + '</div>' : closeHtml+''+template));
+                            } else{
+                                $dialog.html((options.overlay ?
+                                    '<div class="ngdialog-overlay"></div><div class="ngdialog-content" role="document">' + template + '</div>' :
+                                    '<div class="ngdialog-content" role="document">' + template + '</div>'));
+                            }
 
                             $dialog.data('$ngDialogOptions', options);
 
@@ -659,8 +673,15 @@
                             }
 
                             closeByDocumentHandler = function (event) {
-                                var isOverlay = options.closeByDocument ? $el(event.target).hasClass('ngdialog-overlay') : false;
-                                var isCloseBtn = $el(event.target).hasClass('ngdialog-close');
+                                var isCloseBtn = $el(event.target).hasClass('ngdialog-close'),
+                                    isOverlay;
+
+                                if(options.verticalCentered) {
+                                    var isContent = $el(event.target).closest('.ngdialog-content').length;
+                                    isOverlay = options.closeByDocument ? !isContent : false;
+                                } else {
+                                    isOverlay = options.closeByDocument ? $el(event.target).hasClass('ngdialog-overlay') : false;
+                                }
 
                                 if (isOverlay || isCloseBtn) {
                                     publicMethods.close($dialog.attr('id'), isCloseBtn ? '$closeButton' : '$document');
